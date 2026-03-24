@@ -31,16 +31,40 @@ El conjunto de esquemas de relaciones es llamada **esquema relacional de la base
 ### Claves:
 - un conjunto de atributos forma una clave de una relacion si no permitimos que dos tuplas en una instancia tengan los mismo valores en todos los atributos de la clave. Por lo general dentro del modelo se suelen usar calves artificiales, dado que no seria correcto asumir que los valores de un cierto atributo seran unicos entra las distintas tuplas. 
 
+## Operaciones
+Para poder realizar operacion de manipulacion de informacion, sus conceptos se sostiene sobre el **Algebra relacional**. La idea es definir un lengauje especifico para bases de datos, siendo util definirlo sobre estos concepto al ser menos poderoso, esto hace que sea mas eificiente y sencillo de programar. 
+
+**Algebra:** Esta formado por un cojunto de operadores y operando atomicos. 
+
+Dentro de las operaciones mas comunes tenemos la union, la interseccion y la diferencia. Para aplicar esto sobre dos esquemas de relaciones **S** y **R**, deben tener los mismos conjuntos de atributos y dominios para cada uno, a us vez deben tener el mismo orden en los atributos. 
+
+**Seleccion:**  Aplicado a una relacion **R** produce una nueva relacion como subconjuntos de tuplas de **R**. Contiene los mismos atribnutos que **R**
+Por lo general se expresan asignando una condicion sobre los atributos.
+
+**Producto Cartesiano:**se denota como **R X S**, donde **R** y **S** son dos conjuntos, y el resultado de la operacion es un conjunto de pares, donde el primero elemento pertence a **R** y el segundo pertence a **S**.
+
+**Natural joins:** dado dos relaciones se busca unir aquellas tuplas que matchhean de alguna manera. Los que buscamos matchear son atributos entre relaciones. Esta sera la forma en la que querremos unir distintas relaciones descompuestas. 
+
+**Theta joins:** La idea es generar pares de tuplas pero en este caso con otro tipo de condiciones. En este caso usamos condiciones mas complejas que solo el matcheo en el valor de un conjunto de atributos. 
+
+A partir de estas operaciones basicas podemos generar expresiones mas complejas que nos permiten la union de las mismas con el fin de realizar consultas a nuestra base. 
+
+## Constrains
+A la hora de querer exprsarlas hay de dos tipos: 
+- Expresar que no queremos que un valor dentro de uma realcion sea vacio
+- Expresar que cada tuplas de R tambien debe ser reasultado de S
+
 ## Teoria de diseño de bases relacionales 
 
 Hay muchas maneras de diseñar un esquema de base relacional para una aplicacion. mas alla de esto siempre un esquema tendra lugar para poder mejorarse. 
 Por lo general los mayores problemas los esquemas surgen de queres combinar mucha informacion en una sola relacion. 
 Hay una teoria solida sobre la nocion de **dependecia** que nos permite definir que hace a un buen esquema de base relacional. 
 
-### Dependencia funcional
+### Dependencia funcional 
 Una **dependencia funcional** sobre una relacion **R** sostiene que si dos tuplas de **R** estan de acuerdo en los atributos $A_1$, $A_2$, ... $A_n$
 entonces deben estar de acuerdo en otra lista de atributos $B_1$, $B_2$, ... $B_n$. Cuando hablamos de que las tuplas estan de acuerdo en sus atributos, implica que poseen el mismo valor. 
 Si para cada instancia de **R** tenemos que la dependencia funcional es verdadera entonces digo que **R** la satisface.
+Es una generalizacion para la nocion de clave dentro de la relacion.
 
 ### Claves de una relacion
 Decimos que uno o mas atributos es una clave de una relacion si: 
@@ -60,7 +84,9 @@ En otros libros se suele hablar de de clave candidata para referirse a los que n
 
 ### Reglas sobre dependemcia funcional 
 #### Razonando sobre dependencias funcionales
-Vamos a ver como se puede inferir distintas dependencias funcionales.
+Vamos a ver como se puede inferir distintas dependencias funcionales. Dentro de esto podemos tener una nocion de equivalencia sobres conjuntos de **FD**:
+-Dos conjuntos de **FD**, **S** y **T** son equivalentes si el conjunto re lreaciones que satisface **S** es le mismo al que satisface **T**
+-De forma general, un cojunto de **FD** sigue a un cojunto de **FD** **>T** si todas la relaciones que satisface **T** tambien satisfacen **S**
 
 #### Reglas de combinacion o spliteo 
 podemos decir que: 
@@ -110,7 +136,7 @@ podemos encontrar el siguiente tipo de anomalias:
 - **Anomalias de borrado**: si un conjunto de valores se vuelven vacios, puede ser que perdamos otra informacion como efecto colateral. 
 
 ## Formas normales
-las formas normales son un conjunto de reglas que nos permiten evitar las anomalias mencionadas. Dentro de las mas importantes tenemos **la forma normal de boyce-codd** y **la tercera forma normal**.
+las formas normales son un conjunto de reglas que nos permiten evitar las anomalias mencionadas. Da un cojunto de propiedades que debe cumplir una relacion de acuerdo a las **relaciones de dependencia**. Describe la forma en la que se van a organizar los atributos en las tablas. Dentro de las mas importantes tenemos **la forma normal de boyce-codd** y **la tercera forma normal**.
 nos dan el piso para el proceso de descomposicion. la idea es partiendo de una relacion universal e ir descomponiendo hasta llegar a la forma normal. 
 
 ### Primera Forma Normal
@@ -134,6 +160,8 @@ Otra forma de pensarlo es que el lado izquiero de toda dependencia funcional no 
 
 Lo que nos permite esto es que toda dependencia funcional este ligada a una clave, por lo tanto no hay dependencia ocultas o duplicaciones innecesarias. 
 De esta forma **BCNF** elimina las anomalias porque evita las **DF** donde el determinante no identifica univocamente a las tuplas. 
+
+La idea es repitiendo un proceso hasta que todas nuestras relaciones se ecuentren en **BCNF**. la idea es siempre partir de aquella **FD** que esta violando el concepto de **BCNF**
 
 Exiten algunos casos triviales con respecto a relaciones y este tipo de formas normales. Suponiendo una relacion donde tengo dos atributos **A** y **B**, puedo ver que:
 - No hay depedendencia funcional no triviales, por lo tanto **BCNF** se mantiene, dado que solo una dependencia funcional no trivial puede romper la condicion. 
@@ -160,9 +188,11 @@ La descomposion sera lossles si alguna fila termina con todos los atributos igua
 
 ### Preservacion de dependencias
 Muchas veces en la descomposicion **BCNF** hay que hacer un tradeoff entre poser un **lossless join** y poder **conserva las dependencias**.
+Cuando hablamos de conservar dependencias es que aparezcan de forma explicita en alguna de las relaciones de la descomposocion. Al eliminarse una **FD**, por ejemplo una que expresa transitivida, solo puede ser recuperada por medio de un join de sus atributos.
+De esta form el algoritmo propuesto nos permite eliminar anomalicas y resuperar la informacion, pero no preservar las dependencias.
 
 ## Tercera Forma Normal
-Es una forma normal mas relajada que **BCNF**  En este caso la tercera forma normal nos permite tener lossless join y dependecy preservation.
+Es una forma normal mas relajada que **BCNF**  En este caso la tercera forma normal nos permite tener lossless join y dependecy preservation, pero no permite eliminar las anomalias, dejando muchas veces redundancia. La preservar las **FD** nos permite la eveluacion de las mismas sin la necesidad de elbaorar joins con las otras relaciones.
 
 Una relacion **R** esta en tercera forma normal si cuando $A_1,...,A_n$ -> $B_1,...,B_m$ es una **DF** no trivial, o bien {A_1,...,A_n} es una superclave o 
 esos atributos $B_1,...,B_m$ que no estan entre las **As**, son miembros de alguna clave. Tambien se puede de definir como o bien la parte izquierda es una superclave o los valores **B** son primos.
