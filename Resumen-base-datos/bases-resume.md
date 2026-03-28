@@ -8,10 +8,13 @@ Nos permite decribir data o informacion. la descripcion contiene 3 partes:
 
 Actualmente hay dos modelos fuertes con respecto a como representar los sistemas de bases de datos:
 - El modelo relacional: se basa en tablas. gran parte del estudio de este modelo se basa en ver como se implementan estas tablas.
-Las operaciones estaran asociadas a algebra relacional. 
+En la mayoria de veces las realciones no esta implementadas como estructuras en la memoria principal, a la hora de implmentarlas fisicamente hay que tener en cuenta la necesidad de a acceder a relaciones muy grandes que viven en el disco. Las operaciones estaran asociadas a algebra relacional. 
 - El modelo semiestructurado: se asemaja mas a arboles o grafos. El principal representante es XML, que permite repsentar informacion de forma jerarquica usando elmentos taggeados. 
 
-Mas alla de esto el modelo relacional suele ser el mas preferido debido a que por medio de este modelo se favorece a la eficiencia para acceder y mofidicar data, como tambien a la facilidad de uso.
+se podira pensar que el moldeo semiestrcturado posee mayor flexibilidad que el modelo relacional, pero mas alla de esto el modelo relational suele ser el mas preferido. Como la bases de datos son grandes,. se necesicete ser eficiente a la ahora de acceder o modificar data. A us vez de ser simple de utilizar. Estos dos objetivos son logrados por el modelo relacional:
+- Provee una forma simple y limitada de modelar la data que es versatil como para poder modelar todo tipo de relacion
+- Porvee un cojunto limtiad de operciones pero utiles.
+Todo junto convierte las limitaciones en mejoras, permitiendo construir lengaujes que permiten expresar consultas de una forma muy buena. 
 
 ## Modelo relacional
 Permite representar data de una forma muy sencilla, como una tabla de dos dimensiones llamada relacion. 
@@ -21,7 +24,7 @@ Terminos importantes del modelo:
 ### Esquemas: 
 - El nombre de una relacion y el cojunto de atributos para la misma se llama esquema de la relacion. 
   Mas alla de que los atributos se los tome como cojunto, se suele establecer un order para mostrarlos dentro de la relacion. 
-El conjunto de esquemas de relaciones es llamada **esquema relacional de la base de datos**.
+El conjunto de esquemas de relaciones es llamada **esquema relacional de la base de datos**. Los atributos dentro de un esquema no son una lista, sino que solo seran un conjunto. se suele especificar un orden en la forma que mostrarmos los tributos en la relacion. 
 ### Tuplas:
 - Es cualquier fila mas alla del encabezado que posee el nombre de los atributos. 
 ### Dominio:
@@ -31,23 +34,58 @@ El conjunto de esquemas de relaciones es llamada **esquema relacional de la base
 ### Claves:
 - un conjunto de atributos forma una clave de una relacion si no permitimos que dos tuplas en una instancia tengan los mismo valores en todos los atributos de la clave. Por lo general dentro del modelo se suelen usar calves artificiales, dado que no seria correcto asumir que los valores de un cierto atributo seran unicos entra las distintas tuplas. 
 
+## Historia del modelo relacional
+Surge a partir de un paper excrito **Ted Codd** en 1970. En este se propone que la informacion deberia ser presentada como tablas llamadas **relaciones**.
+Por detras, se tendria una estrctura compleja que permitiria la repsuesta reapída frente a ciertas consultas que se le haga. 
+Para 1990 este tipo de modelos se convirtieron en la idea a seguir, mas alla de esto la idea sobre modelos de bases de datos fue cambiando.
+
 ## Operaciones
 Para poder realizar operacion de manipulacion de informacion, sus conceptos se sostiene sobre el **Algebra relacional**. La idea es definir un lengauje especifico para bases de datos, siendo util definirlo sobre estos concepto al ser menos poderoso, esto hace que sea mas eificiente y sencillo de programar. 
+En un momento las bases relacionales se construian directamente sobre el algebra relacionla, hoy ya no es tan asi, sino que usan ese modelo como su base.
 
-**Algebra:** Esta formado por un cojunto de operadores y operando atomicos. 
+**Algebra:** Esta formado por un cojunto de operadores y operando atomicos. nos permite generar expresiones operando operadores a operandos atomicos. En el algebra relacional los operandos atomicos, son la variables que representan relaciones y contsntes que son relaciones finitas. 
 
-Dentro de las operaciones mas comunes tenemos la union, la interseccion y la diferencia. Para aplicar esto sobre dos esquemas de relaciones **S** y **R**, deben tener los mismos conjuntos de atributos y dominios para cada uno, a us vez deben tener el mismo orden en los atributos. 
+**Operaciones:** se puede dividir en: 
+- Operaciones clasica: union, interseccion y diferencia.
+- Operaciones que remueven parte de una relacion: seleccion y poryeccion.
+- Operafciones que combinan tuplas de dos relaciones: porducto cartesiano y tuplas. 
+- Operaciones de renombre: no afectan a las tuplas pero si cambian el esqeuma de la relacion.
+
+Estas expresiones dentro del algebra se llaman **querires** o **consultas**.
+
+**Operaciones conocidas:**
+- **Union:** $R \cup S$ conjunto de elemeento que que estan en R o S.
+- **Interseccion:** $R \cap S$, conjunto de elementos que estan en R y S.
+- **Diferencia:** $R - S$. Cojunto de lementos que estan en R pero no en S.
+
+Para poder aplicar esto es necesarios que:
+- R y S tengas esquemas con conjuntos de atributos identicos y el dominio de cada atribtuo debe ser el mimso para R y S.
+- Antes de computar cualquier de estas relaciones, las oclumnas de R y S deben estar oredenadas para que los atributos esten en el mimso orden para ambas realciones
+
+**Proyeccion:** se utiliza para producir desde una relacion **R**, una nuvea que posee algunas columnas de **R**. Para identiifarla se establecen el conjunto de argumentos que se van a extraer de la misma. a la hora de hacer una poryeccion, si hay tuplas repertidas en la misma, estas se eliminan.
 
 **Seleccion:**  Aplicado a una relacion **R** produce una nueva relacion como subconjuntos de tuplas de **R**. Contiene los mismos atribnutos que **R**
-Por lo general se expresan asignando una condicion sobre los atributos.
+Por lo general se expresan asignando una condicion sobre los atributos, es decir las tuplas obtenidas por medio de la seleccion seran aquellas que satisfacgan algunas codicion **C**. la condiicion se aplica sobre toda tuplas perteneciente a la realcion dada. 
 
-**Producto Cartesiano:**se denota como **R X S**, donde **R** y **S** son dos conjuntos, y el resultado de la operacion es un conjunto de pares, donde el primero elemento pertence a **R** y el segundo pertence a **S**.
+**Producto Cartesiano:** se denota como **R X S**, donde **R** y **S** son dos conjuntos, y el resultado de la operacion es un conjunto de pares, donde el primero elemento pertence a **R** y el segundo pertence a **S**.Como los elemntos de **R** y **S** son tuplas, el resultado de su porudtco cartesano sera un cojunto de tuplas aun mas grande en longitud.por lo genral los componete sde la tupla de la izquierda estarn antes que los de la tupla de la derecha. 
+Si un atributo posee el mismo nombre en ambas realciones, hya que genra un nuevo nombre para al menos alguno de ellos dos. 
 
-**Natural joins:** dado dos relaciones se busca unir aquellas tuplas que matchhean de alguna manera. Los que buscamos matchear son atributos entre relaciones. Esta sera la forma en la que querremos unir distintas relaciones descompuestas. 
+**Natural joins:** dado dos relaciones se busca unir aquellas tuplas que matchhean de alguna manera. Los que buscamos matchear son atributos entre relaciones.
+En este caso lo que hacemos es myachear aquellas tuplas que esten de acuerdo en algun atributo comun de los esquemas **R** y **S**. De esta forma un tupla de **R** y otra tupla de **S** conforman un par si y solo si ambas tuplas estan de acuuedo en un conjunto de atributos especificados. EL resultado es lo que se denomina como **Tupla joineada** o **joined tuple**.
 
-**Theta joins:** La idea es generar pares de tuplas pero en este caso con otro tipo de condiciones. En este caso usamos condiciones mas complejas que solo el matcheo en el valor de un conjunto de atributos. 
+**Theta joins:** La idea es generar pares de tuplas pero en este caso con otro tipo de condiciones. En este caso usamos condiciones mas complejas que solo el matcheo en el valor de un conjunto de atributos. En este caso la expresion **theta** indica la posibilidad de incluir una condicion mas compleja.
+la forma de computar esto ser:
+- realizar un producto cartesiano de las relaciones **R** y **S**.
+- seleccionar del preducto de las mismas quellas tuplas que satisfagan la condicion dada.
 
-A partir de estas operaciones basicas podemos generar expresiones mas complejas que nos permiten la union de las mismas con el fin de realizar consultas a nuestra base. 
+A partir de estas operaciones basicas podemos generar expresiones mas complejas que nos permiten la union de las mismas con el fin de realizar consultas a nuestra base. por lo general podemos tener mas de una exprtesion que representa la misma consulta.
+
+**Renombre:** exite un operador que nos permite renombrar las relaciones.El operador recibe una realcion **S**, y al aplicarse sobre **R**, contendra las mismas tuplas con nombres distintos.
+
+### Equivalencias de operadores: ###
+![Texto alternativo](equivalencia-1.png)
+![Texto alternativo](equivalencia-2.png)
+![Texto alternativo](equivalencia-3.png)
 
 ## Constrains
 A la hora de querer exprsarlas hay de dos tipos: 
@@ -56,7 +94,7 @@ A la hora de querer exprsarlas hay de dos tipos:
 
 ## Teoria de diseño de bases relacionales 
 
-Hay muchas maneras de diseñar un esquema de base relacional para una aplicacion. mas alla de esto siempre un esquema tendra lugar para poder mejorarse. 
+Hay muchas maneras de diseñar un esquema de base relacional para una aplicacion. Mas alla de esto siempre un esquema tendra lugar para poder mejorarse. 
 Por lo general los mayores problemas los esquemas surgen de queres combinar mucha informacion en una sola relacion. 
 Hay una teoria solida sobre la nocion de **dependecia** que nos permite definir que hace a un buen esquema de base relacional. 
 
@@ -85,8 +123,8 @@ En otros libros se suele hablar de de clave candidata para referirse a los que n
 ### Reglas sobre dependemcia funcional 
 #### Razonando sobre dependencias funcionales
 Vamos a ver como se puede inferir distintas dependencias funcionales. Dentro de esto podemos tener una nocion de equivalencia sobres conjuntos de **FD**:
--Dos conjuntos de **FD**, **S** y **T** son equivalentes si el conjunto re lreaciones que satisface **S** es le mismo al que satisface **T**
--De forma general, un cojunto de **FD** sigue a un cojunto de **FD** **>T** si todas la relaciones que satisface **T** tambien satisfacen **S**
+- Dos conjuntos de **FD**, **S** y **T** son equivalentes si el conjunto de relaciones que satisface **S** es le mismo al que satisface **T**
+- De forma general, un cojunto de **FD** sigue a un cojunto de **FD** **T** si todas la relaciones que satisface **T** tambien satisfacen **S**
 
 #### Reglas de combinacion o spliteo 
 podemos decir que: 
@@ -140,10 +178,11 @@ las formas normales son un conjunto de reglas que nos permiten evitar las anomal
 nos dan el piso para el proceso de descomposicion. la idea es partiendo de una relacion universal e ir descomponiendo hasta llegar a la forma normal. 
 
 ### Primera Forma Normal
-Todas las relaciones estan en forma normal de acuedo a nuestra definicion de modelo relacional. Una relacion esta en primera forma normal si y solo si todas los atributos son atomicos. 
+Todas las relaciones estan en forma normal de acuedo a nuestra definicion de modelo relacional. Una relacion esta en primera forma normal si y solo si todas los atributos son atomicos. si tuviera una lista de campos que crece exponencialmente tampoco es atomico. los atributos que almaceno deben ser atomicos. dentro de la relacion los aitrbutos que tengo debenser atomicos, si yo tengo nota_1, nota_2, nota_3 como atributo no tengo atomicidad. 
 
 ### Segunda Forma Normal 
 Para definir esto tenemos que un atributo se lo considera primo si es miembro de alguna clave. Consideramos que una relacion esta en segunda forma normal si todo atributo no primo **A** en **R** no es parcialemnte dependiente de alguna clave de **R**. Esta forma normal solo tiene sentido si la clave es compuesta, de ser simple ya va estar en segunda forma normal. 
+si tengo una clave compuesta, por ejemplo tengo una tabla notas donde la clave es materia y lu. si en esa tabla pongo ademas el nombre de la materias, el nombre de la materias va a depedner solo del codigo de la materias. aca violo la segunda forma normal, tengo un atributo que pertenece a una parte de la clave.
 
 ## Descomposicion de relaciones
 Para eliminar las anomalias se deben descomponer las relaciones. La descomposicion de **R** nos permite splitear los atributos de **R** para construir los esquemas de dos nuevas relaciones. Dada una relacion **R** con atributos $A_1$, $A_2$, ... $A_n$, podemos descompoenter a **R** en dos relaciones **S** con atributos  $B_1$, $B_2$, ... $B_n$ y otra relacion **T** con atributos $C_1$, $C_2$, ... $C_n$ tal que cumple que:
